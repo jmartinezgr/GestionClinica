@@ -21,4 +21,5 @@ urlpatterns = [
     path('',include('mainapp.urls')),
     path('',include('user.urls')),
     path('',include('enfermeras.urls')),
+    path('',include('recursoshumanos.urls')),
 ]

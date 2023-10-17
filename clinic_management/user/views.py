@@ -16,6 +16,8 @@ def login_view(request):
 
                 if user.rol.name == 'Enfermeras':
                     return redirect('home_enfermera')
+                elif user.rol.name == 'Recursos Humanos':
+                    return redirect('home_recursos_humanos')
                 print(user.rol.name)                
             else:
                 messages.error(request, "Error: Credenciales inválidas. Inténtalo de nuevo.")
