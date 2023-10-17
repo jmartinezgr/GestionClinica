@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'user',
     'enfermeras',
     'recursoshumanos',
+    'personaladministrativo',
 ]
 
 MIDDLEWARE = [
