@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.hashers import make_password
+
 
 class UsuarioManager(BaseUserManager):
     def create_user(self, username, email, nombres, apellidos, nacimiento, direccion, rol, password=None):
@@ -65,6 +67,9 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     @property
     def is_staff(self):
         return self.usuario_administrador
+    
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
 
 
 class Role(models.Model):

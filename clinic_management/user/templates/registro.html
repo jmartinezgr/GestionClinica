@@ -1,0 +1,79 @@
+{% extends 'layouts/layout.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header text-center">Registro</div>
+          <div class="card-body">
+            <form method="post">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                  </div>
+                  <div class="form-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                  </div>
+                  <div class="form-group">
+                    {{ form.nombres.label_tag }}
+                    {{ form.nombres }}
+                  </div>
+                  <div class="form-group">
+                    {{ form.apellidos.label_tag }}
+                    {{ form.apellidos }}
+                  </div>
+                  <div class="form-group">
+                    {{ form.nacimiento.label_tag }}
+                    {{ form.nacimiento }}
+                  </div>
+                  <!-- Mueve el botón aquí para que esté al mismo nivel que el último elemento de la columna 1 -->
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    {{ form.direccion.label_tag }}
+                    {{ form.direccion }}
+                  </div>
+                  <div class="form-group">
+                    {{ form.rol.label_tag }}
+                    {{ form.rol }}
+                  </div>
+                  <div class="form-group">
+                    {{ form.password1.label_tag }}
+                    {{ form.password1 }}
+                  </div>
+                  <div class="form-group">
+                    {{ form.password2.label_tag }}
+                    {{ form.password2 }}
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary" style="margin-top: 32px; width: 320px;background-color: rgb(128, 0, 128); border-color: rgb(128, 0, 128);">Registrarse</button>
+                  </div>                  
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // JavaScript para limpiar los campos al cargar la página
+    window.onload = function() {
+      document.getElementById("id_username").value = "";
+      document.getElementById("id_email").value = "";
+      document.getElementById("id_nombres").value = "";
+      document.getElementById("id_apellidos").value = "";
+      document.getElementById("id_nacimiento").value = "";
+      document.getElementById("id_direccion").value = "";
+      document.getElementById("id_rol").value = "";
+      document.getElementById("id_password1").value = "";
+      document.getElementById("id_password2").value = "";
+    };
+  </script>
+{% endblock %}
