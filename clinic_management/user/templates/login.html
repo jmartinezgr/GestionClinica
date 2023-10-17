@@ -7,8 +7,11 @@
         <div class="card mt-5">
           <div class="card-header">Iniciar Sesión</div>
           <div class="card-body">
+            {% if form.errors %}
+            <div id="login-error-message" class="alert alert-danger">Su nombre de usuario y contraseña no coinciden. Inténtalo de nuevo.</div>
+            {% endif %}
             {% for message in messages %}
-              <div class="alert alert-danger">
+              <div class="alert alert-success">
                 {{ message }}
               </div>
             {% endfor %}
@@ -29,5 +32,13 @@
       </div>
     </div>
   </div>
+  <script>
+    // Ocultar el mensaje de error después de 5 segundos (5000 milisegundos)
+    setTimeout(function() {
+      var errorMessage = document.getElementById('login-error-message');
+      if (errorMessage) {
+        errorMessage.style.display = 'none';
+      }
+    }, 5000); // 5000 ms = 5 segundos
+  </script>
 {% endblock %}
-
