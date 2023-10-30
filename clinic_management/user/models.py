@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth.hashers import make_password
 
-
 class UsuarioManager(BaseUserManager):
     def create_user(self, username, email, nombres, apellidos, nacimiento, direccion, rol, password=None):
         if not email:

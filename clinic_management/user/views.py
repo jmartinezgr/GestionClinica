@@ -42,6 +42,7 @@ def registro_view(request):
         form = RegistroForm()
     return render(request, 'registro.html', {'form': form})
 
+@login_required
 def logout_view(request):
     logout(request=request)
     return redirect('login_view')
