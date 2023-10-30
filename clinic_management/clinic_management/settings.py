@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'enfermeras',
     'recursoshumanos',
     'personaladministrativo',
+    'rest_framework',
+    'api',
 ]
 
 MIDDLEWARE = [
