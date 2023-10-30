@@ -12,31 +12,34 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    {{ form.username.label_tag }}
-                    {{ form.username }}
+                    {{ form.nombre.label_tag }}
+                    {{ form.nombre }}
+                  </div>
+                  <div class="form-group">
+                    {{ form.cedula.label_tag }}
+                    {{ form.cedula }}
                   </div>
                   <div class="form-group">
                     {{ form.email.label_tag }}
                     {{ form.email }}
                   </div>
                   <div class="form-group">
-                    {{ form.nombres.label_tag }}
-                    {{ form.nombres }}
+                    {{ form.telefono.label_tag }}
+                    {{ form.telefono }}
                   </div>
                   <div class="form-group">
-                    {{ form.apellidos.label_tag }}
-                    {{ form.apellidos }}
+                    {{ form.direccion.label_tag }}
+                    {{ form.direccion }}
                   </div>
+                </div>
+                <div class="col-md-6">
                   <div class="form-group">
                     {{ form.nacimiento.label_tag }}
                     {{ form.nacimiento }}
                   </div>
-                  <!-- Mueve el botón aquí para que esté al mismo nivel que el último elemento de la columna 1 -->
-                </div>
-                <div class="col-md-6">
                   <div class="form-group">
-                    {{ form.direccion.label_tag }}
-                    {{ form.direccion }}
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
                   </div>
                   <div class="form-group">
                     {{ form.rol.label_tag }}
@@ -51,8 +54,8 @@
                     {{ form.password2 }}
                   </div>
                   <div class="text-center">
-                    <button type="submit" class="btn btn-primary" style="margin-top: 32px; width: 320px;background-color: rgb(128, 0, 128); border-color: rgb(128, 0, 128);">Registrarse</button>
-                  </div>                  
+                    <button type="submit" class="btn btn-primary" style="margin-top: 8px; width: 320px;background-color: rgb(128, 0, 128); border-color: rgb(128, 0, 128);">Registrarse</button>
+                  </div>
                 </div>
               </div>
             </form>
@@ -61,6 +64,4 @@
       </div>
     </div>
   </div>
-  
-
 {% endblock %}

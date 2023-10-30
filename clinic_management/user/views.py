@@ -14,10 +14,17 @@ def login_view(request):
             if user is not None:
                 login(request, user)
 
-                if user.rol.name == 'Enfermeras':
+                if user.rol is None:
+                    return redirect('home_enfermera')
+                elif user.rol.name == 'Enfermeras':
                     return redirect('home_enfermera')
                 elif user.rol.name == 'Recursos Humanos':
                     return redirect('home_recursos_humanos')
+                elif user.rol.name == 'Personal Administrativo':
+                    return redirect('home_personal_administrativo')
+                elif user.rol.name == 'Médicos':
+                    return redirect('home_medico')
+                    
                 print(user.rol.name)                
             else:
                 messages.error(request, "Error: Credenciales inválidas. Inténtalo de nuevo.")
@@ -37,7 +44,12 @@ def registro_view(request):
             messages.success(request, "Tu cuenta ha sido creada. Ahora puedes iniciar sesión.")
             return redirect('login_view')
         else:
-            print(form.errors)  # Imprime los errores en la consola para depuración
+            if 'username' in form.errors:
+                messages.error(request, "Nombre de usuario ya existe.")
+            elif 'password2' in form.errors:
+                messages.error(request, "Contraseña no es suficientemente segura. Prueba agregar todo tipo de caracteres.")
+            elif 'email' in form.errors:
+                messages.error(request, "Este correo ya existe en la base de datos o no es válido")
     else:
         form = RegistroForm()
     return render(request, 'registro.html', {'form': form})
