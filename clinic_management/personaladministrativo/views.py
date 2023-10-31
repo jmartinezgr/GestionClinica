@@ -38,11 +38,9 @@ def crear_paciente(request):
             response = requests.post(api_url, json=data)
 
             if response.status_code == 201:
-                # Si la creación fue exitosa, puedes redirigir o mostrar un mensaje de éxito
-                print("Aleluya")
+                # Si la creación fue exitosa, puedes redirigir o mostrar un mensaje de éxitos
                 return redirect('crear_paciente')
             else:
-                print("No aleluya")
                 # Maneja el error de la creación
                 messages.error(request, "Hubo un error al crear el paciente a través de la API.")
         else:
