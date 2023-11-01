@@ -6,3 +6,13 @@ from .serializer import PacienteSerializer
 class PacienteListCreateView(generics.ListCreateAPIView):
     queryset = Paciente.objects.all()
     serializer_class = PacienteSerializer
+
+class PacienteRetrieveView(generics.RetrieveAPIView):
+    queryset = Paciente.objects.all()
+    serializer_class = PacienteSerializer
+    lookup_field = 'numero_identificacion'
+
+class PacienteUpdateView(generics.UpdateAPIView):
+    queryset = Paciente.objects.all()
+    serializer_class = PacienteSerializer
+    lookup_field = 'numero_identificacion'
