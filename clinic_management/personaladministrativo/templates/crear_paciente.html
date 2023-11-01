@@ -20,19 +20,23 @@
 
 {% block content %}
   <div class="container mt-4">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center align-items-center mt-5">
       <div class="col-md-10">
         <div class="card">
           <div class="card-header text-center">Registro</div>
           <div class="card-body">
             {% if messages %}
-            <div class="alert alert-danger" role="alert">
-              <ul>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-              </ul>
-            </div>
+              {% for message in messages %}
+                {% if message.tags == 'success' %}
+                  <div class="alert alert-success" role="alert" id="Errorcito">
+                    {{ message }}
+                  </div>
+                {% elif message.tags == 'error' %}
+                  <div class="alert alert-danger" role="alert" id="Errorcito">
+                    {{ message }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             {% endif %}
             <form method="post">
               {% csrf_token %}
@@ -105,4 +109,12 @@
       </div>
     </div>
   </div>
+  <script>
+    setTimeout(function () {
+      var errorMessage = document.getElementById("Errorcito");
+      if (errorMessage) {
+        errorMessage.style.display = "none";
+      }
+    }, 4000);
+  </script>
 {% endblock %}

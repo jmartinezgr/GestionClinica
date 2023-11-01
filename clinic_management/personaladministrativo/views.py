@@ -64,8 +64,7 @@ def buscar_paciente(request):
             return redirect('actualizar_paciente', numero_identificacion=numero_identificacion)
         else:
             # Si no se encontró al paciente, muestra un mensaje de error
-            messages.error(request, "No se ha encontrado el paciente con la API")
-            print('Error buscando paciente')
+             messages.error(request, "No se ha encontrado al paciente con el número de identificación proporcionado.")
 
     return render(request, 'buscar_paciente.html')
 
@@ -112,14 +111,13 @@ def actualizar_paciente(request, numero_identificacion):
             if api_response.status_code == 200:
                 # Si la actualización es exitosa, puedes redirigir a una página de confirmación o mostrar un mensaje de éxito
                 messages.success(request, "El paciente se ha actualizado con éxito.")
-                return redirect('crear_paciente')
+                return redirect('buscar_paciente')
             else:
                 # Maneja el error de actualización
                 messages.error(request, "Hubo un error al actualizar al paciente a través de la API.")
         else:
             # Si el formulario no es válido, muestra los errores
-            print('Formulario inválido')
-            print(form.errors)
+            messages.error(request, "Existe un valor invalido en el formulario")
     else:
         # Si no se ha enviado el formulario, muestra el formulario de actualización con los datos del paciente
         form = PacienteForm(initial=paciente_data)
