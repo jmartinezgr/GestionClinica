@@ -34,7 +34,7 @@ def crear_paciente(request):
             }
 
             # Llama a la API para crear el paciente
-            api_url = 'http://127.0.0.1:8000/api/pacientes/'
+            api_url = 'http://127.0.0.1:8000/api/pacientes/create/'
             response = requests.post(api_url, json=data)
 
             if response.status_code == 201:
@@ -79,7 +79,9 @@ def actualizar_paciente(request, numero_identificacion):
         messages.error(request, "No se ha encontrado al paciente con el número de identificación proporcionado.")
         return redirect('buscar_paciente')
 
-    paciente_data = response.json()
+    respuesta = response.json()
+
+    paciente_data = respuesta.get('paciente',{})
 
     if request.method == 'POST':
         form = PacienteForm(request.POST)
