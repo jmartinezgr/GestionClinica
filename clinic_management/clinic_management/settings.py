@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'enfermeras',
     'recursoshumanos',
     'personaladministrativo',
+    'medicos',
     'rest_framework',
     'api',
 ]
