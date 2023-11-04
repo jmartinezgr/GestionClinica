@@ -43,6 +43,7 @@ def crear_paciente(request):
             else:
                 # Maneja el error de la creación
                 messages.error(request, "Hubo un error al crear el paciente a través de la API.")
+                print(response)
         else:
             print("Errorcito")
             print(form.errors)

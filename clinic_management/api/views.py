@@ -5,6 +5,14 @@ from personaladministrativo.models import Paciente
 from .serializer import PacienteSerializer
 from rest_framework import status
 
+def paciente_meta(numero_identificacion):
+    return {
+        'self': reverse('paciente-detail', args=[numero_identificacion]),
+        'update': reverse('paciente-update', args=[numero_identificacion]),
+        'partial_update': reverse('paciente-partial-update', args=[numero_identificacion]),
+        'delete': reverse('paciente-delete', args=[numero_identificacion]),
+    }
+
 @api_view(['GET'])
 def paciente_list(request):
     pacientes = Paciente.objects.all()
@@ -19,8 +27,14 @@ def paciente_list(request):
 def paciente_create(request):
     serializer = PacienteSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        paciente = serializer.save()
+        numero_identificacion = paciente.numero_identificacion
+        data = {
+            'paciente': serializer.data,
+            'self': reverse('paciente-detail', args=[numero_identificacion]),
+            **paciente_meta(numero_identificacion),
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -33,10 +47,7 @@ def paciente_detail(request, numero_identificacion):
     serializer = PacienteSerializer(paciente)
     data = {
         'paciente': serializer.data,
-        'self': reverse('paciente-detail', args=[numero_identificacion], request=request),
-        'update': reverse('paciente-update', args=[numero_identificacion], request=request),
-        'partial_update': reverse('paciente-partial-update', args=[numero_identificacion], request=request),
-        'delete': reverse('paciente-delete', args=[numero_identificacion], request=request),
+        **paciente_meta(numero_identificacion),
     }
     return Response(data)
 
@@ -50,7 +61,11 @@ def paciente_update(request, numero_identificacion):
     serializer = PacienteSerializer(paciente, data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        data = {
+            'paciente':serializer.data,
+            **paciente_meta(numero_identificacion)
+        }
+        return Response(data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PATCH'])
@@ -63,7 +78,11 @@ def paciente_partial_update(request, numero_identificacion):
     serializer = PacienteSerializer(paciente, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        data = {
+            'paciente' : serializer.data,
+            **paciente_meta(numero_identificacion)
+        }
+        return Response(data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
@@ -73,5 +92,8 @@ def paciente_delete(request, numero_identificacion):
     except Paciente.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+    data = {
+        'self': reverse('paciente-delete', args=[numero_identificacion]),
+    }
     paciente.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_204_NO_CONTENT, data=data)
