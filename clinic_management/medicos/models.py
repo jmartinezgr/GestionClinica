@@ -14,7 +14,7 @@ class HistoriaClinica(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.fecha:
-            self.fecha = timezone.now()
+            self.fecha = timezone.now().date()
         super().save(*args, **kwargs)
 
     def __str__(self):
