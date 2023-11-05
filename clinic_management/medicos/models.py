@@ -4,18 +4,14 @@ from personaladministrativo.models import Paciente
 from user.models import Usuario
 
 class HistoriaClinica(models.Model):
-    fecha = models.DateTimeField(default=timezone.now)
+    fecha = models.DateField(default=timezone.now)
     medico = models.ForeignKey(Usuario, on_delete=models.CASCADE)  # Cédula del médico
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)  # Cédula del paciente
     motivo_consulta = models.TextField()
     sintomatologia = models.TextField()
     diagnostico = models.TextField()
     ordenes = models.ManyToManyField('Orden', related_name='historias_clinicas')
-
-    def save(self, *args, **kwargs):
-        if not self.fecha:
-            self.fecha = timezone.now().date()
-        super().save(*args, **kwargs)
+    cerrada = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Historia Clínica de {self.paciente.nombre_completo} ({self.fecha})'

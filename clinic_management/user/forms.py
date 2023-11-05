@@ -26,7 +26,7 @@ class RegistroForm(UserCreationForm):
     )
     nacimiento = forms.DateField(
         label="Fecha de Nacimiento",
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control', 'type':'date'}),
     )
 
     class Meta:
