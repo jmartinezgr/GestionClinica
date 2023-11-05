@@ -1,5 +1,20 @@
 {% extends 'layouts/layout.html' %}
 
+{% block navbar %}
+<li class="nav-item">
+    <a class="nav-link" href={% url 'registro_usuarios' %}> Registro de Usuarios </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'buscar_usuario' %}"> Actualizar Información Usuarios </a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href={% url 'registro_asistencia' %}> Asistencia </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href={% url 'logout_view' %}> Cerrar Sesión </a>
+</li>
+{% endblock %}
+
 {% block content %}
   <div class="container mt-5">
     <div class="row justify-content-center">
@@ -7,6 +22,19 @@
         <div class="card">
           <div class="card-header text-center">Registro</div>
           <div class="card-body">
+            {% if messages %}
+              {% for message in messages %}
+                  {% if message.tags == 'success' %}
+                      <div class="alert alert-success" role="alert" id="Errorcito">
+                          {{ message }}
+                      </div>
+                  {% elif message.tags == 'error' %}
+                      <div class="alert alert-danger" role="alert" id="Errorcito">
+                          {{ message }}
+                      </div>
+                  {% endif %}
+              {% endfor %}
+          {% endif %}
             <form method="post">
               {% csrf_token %}
               <div class="row">
@@ -64,4 +92,12 @@
       </div>
     </div>
   </div>
+  <script>
+    setTimeout(function () {
+        var errorMessage = document.getElementById("Errorcito");
+        if (errorMessage) {
+            errorMessage.style.display = "none";
+        }
+    }, 4000);
+</script>
 {% endblock %}

@@ -23,6 +23,19 @@
             <div class="card mt-5">
                 <div class="card-header text-center">Estado de la Historia Clínica</div>
                 <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success" role="alert" id="Errorcito">
+                                    {{ message }}
+                                </div>
+                            {% elif message.tags == 'error' %}
+                                <div class="alert alert-danger" role="alert" id="Errorcito">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                     <!-- Tarjeta con el nombre del paciente y número de historia médica -->
                     <div class="card mb-3">
                         <div class="card-body">
@@ -99,4 +112,12 @@
         </div>
     </div>
 </div>
+<script>
+    setTimeout(function () {
+        var errorMessage = document.getElementById("Errorcito");
+        if (errorMessage) {
+            errorMessage.style.display = "none";
+        }
+    }, 4000);
+</script>
 {% endblock %}

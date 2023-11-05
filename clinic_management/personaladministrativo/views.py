@@ -177,7 +177,8 @@ def generar_factura(request, numero_identificacion):
         historia_clinica = HistoriaClinica.objects.filter(paciente=paciente, cerrada = True,pagada=False).first()
 
         if not historia_clinica:
-            return HttpResponse("No hay procedimientos pendientes de facturación para este paciente.")
+            messages.error(request,"No hay una historia medica por pagar")
+            return  redirect('buscar_paciente_facturacion')
 
         # Realizar cálculos para costo_bruto y costo_final
         costo_bruto = calcular_costo_bruto(historia_clinica)
@@ -198,7 +199,8 @@ def generar_factura(request, numero_identificacion):
         return render(request, 'facturacion.html', context)
 
     except Paciente.DoesNotExist:
-        return HttpResponse("El paciente no existe.")
+        messages.error(request,'Este paciente no existe o no tiene una historia clinica por pagar')
+        return  redirect('buscar_paciente_facturacion')
     
 def generar_pdf_factura(request, numero_identificacion, costo_bruto):
     costo_bruto = float(costo_bruto)
@@ -286,4 +288,5 @@ def generar_pdf_factura(request, numero_identificacion, costo_bruto):
 
         return response
     except Paciente.DoesNotExist:
-        return HttpResponse("El paciente no existe.")
+        messages.error(request,"El paciente no existe")        
+        return  redirect('buscar_paciente_facturacion')

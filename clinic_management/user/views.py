@@ -34,26 +34,6 @@ def login_view(request):
     
     return render(request, 'login.html', {'form': form})
 
-def registro_view(request):
-    if request.method == 'POST':
-        form = RegistroForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password1'])
-            user.save()
-            messages.success(request, "Tu cuenta ha sido creada. Ahora puedes iniciar sesión.")
-            return redirect('login_view')
-        else:
-            if 'username' in form.errors:
-                messages.error(request, "Nombre de usuario ya existe.")
-            elif 'password2' in form.errors:
-                messages.error(request, "Contraseña no es suficientemente segura. Prueba agregar todo tipo de caracteres.")
-            elif 'email' in form.errors:
-                messages.error(request, "Este correo ya existe en la base de datos o no es válido")
-    else:
-        form = RegistroForm()
-    return render(request, 'registro.html', {'form': form})
-
 @login_required
 def logout_view(request):
     logout(request=request)

@@ -13,18 +13,18 @@ def crear_historia_clinica(request):
             try:
                 medico = Usuario.objects.get(cedula=form.cleaned_data['medico'])
             except:
-                print('Medico no encontrado')
+                messages.error(request,"No se ha encontrado un medico con este numero de cedula")
                 return redirect('crear_historia_clinica')
             
             try:
                 paciente = Paciente.objects.get(numero_identificacion=form.cleaned_data['paciente'])
             except:
-                print('No encontro el paciente')
+                messages.error(request,"No se ha encontrado un paciente con este numero de cedula")
                 return redirect('crear_historia_clinica')
             
             try:
                 historia_clinica_verificacion = HistoriaClinica.objects.get(paciente=paciente,cerrada=False)
-                print("Aun hay una historia clinica activa")
+                messages.error(request,"Ya existe una historia clinica activa")
                 return redirect('agregar_ordenes_con_id', id_historia_medica=historia_clinica_verificacion.id)
             except:
                 pass
@@ -44,6 +44,7 @@ def crear_historia_clinica(request):
                 # Redirige a la vista "agregar_ordenes" pasando la ID de la historia médica
                 return redirect('agregar_ordenes_con_id', id_historia_medica=historia_clinica.id)
             else:
+                messages.error(request,"La cedula no pertenece a la de un medico")
                 return redirect('crear_historia_clinica')
         
         else:
@@ -61,11 +62,13 @@ def agregar_ordenes(request):
         try:
             paciente = Paciente.objects.get(numero_identificacion=numero_identificacion)
         except:
+            messages.error(request,"No hay ningun paciente con un ")            
             return redirect('agregar_ordenes')
         
         try:
             historia_clinica = HistoriaClinica.objects.get(paciente=paciente,cerrada=False)
         except:
+            messages.error(request,"No se ha encontrado una historia medica donde agregar el proceso")            
             return redirect('agregar_ordenes')
         
         return redirect('agregar_ordenes_con_id',historia_clinica.id)
@@ -77,6 +80,7 @@ def agregar_ordenes_con_id(request, id_historia_medica):
     try:
         historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica,cerrada=False)
     except:
+        messages.error(request,"No se ha encontrado una historia clinica con este numero de cedula")
         return redirect('agregar_ordenes')
     
     return render(request, 'elegir_orden_con_id.html', {'id_historia_medica': id_historia_medica})
@@ -87,6 +91,7 @@ def agregar_medicamento(request, id_historia_medica):
     # Verifica si existe una orden de Ayuda Diagnóstica sin cerrar
     if historia_clinica.ordenes.filter(tipo_orden='ayuda_diagnostica', cerrada=False).exists():
         # Si existe una orden de Ayuda Diagnóstica sin cerrar, no se permite crear una orden de medicamento
+        messages.error(request,"No puedes agregar un medicamento sin obtener los resultados de los examenes")
         return redirect('agregar_ordenes', id_historia_medica=id_historia_medica)
     
     if request.method == 'POST':
@@ -131,6 +136,12 @@ def agregar_medicamento(request, id_historia_medica):
 
 def agregar_procedimiento(request, id_historia_medica):
     historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
+
+    # Verifica si existe una orden de Ayuda Diagnóstica sin cerrar
+    if historia_clinica.ordenes.filter(tipo_orden='ayuda_diagnostica', cerrada=False).exists():
+        # Si existe una orden de Ayuda Diagnóstica sin cerrar, no se permite crear una orden de medicamento
+        messages.error(request,"No puedes agregar un procedimiento sin obtener los resultados de los examenes")
+        return redirect('agregar_ordenes', id_historia_medica=id_historia_medica)
 
     if request.method == 'POST':
         form = OrdenProcedimientoForm(request.POST)
@@ -212,11 +223,13 @@ def buscar_estado_historia(request):
         try:
             paciente = Paciente.objects.get(numero_identificacion=numero_identificacion)
         except:
+            messages.error(request,"No existe un paciente con ese numero de cedula")
             return redirect('agregar_ordenes')
         
         try:
             historia_clinica = HistoriaClinica.objects.get(paciente=paciente,cerrada=False)
         except:
+            messages.error(request,"No existe una historia clinica para este numero de cedula")            
             return redirect('agregar_ordenes')
         
         return redirect('estado_historia',historia_clinica.id)
@@ -299,6 +312,7 @@ def cerrar_orden(request, id_orden):
     orden.save()
 
     # Redirigir a la página de estado de la historia clínica
+    messages.success(request,"Se cerro la orden con exito")
     return redirect('estado_historia', id_historia_medica=orden.historias_clinicas.first().id)
 
 def cerrar_ayuda_diagnostica(request, id_orden):
@@ -319,6 +333,7 @@ def cerrar_ayuda_diagnostica(request, id_orden):
             orden_ayuda_diagnostica.save()
             
             # Redirigir a la página de estado de la historia clínica
+            messages.success(request,"Se cerro la ayuda diagnostica con exito")
             return redirect('estado_historia', id_historia_medica=orden_ayuda_diagnostica.orden.historias_clinicas.first().id)
     else:
         form = OrdenAyudaDiagnosticaFinalForm(instance=orden_ayuda_diagnostica)
@@ -332,4 +347,5 @@ def cerrar_historia_clinica(request, id_historia_medica):
     historia.cerrada = True
     historia.save()
 
+    messages.success(request,"Se cerro la historia clinica con exito")
     return redirect('crear_historia_clinica')
