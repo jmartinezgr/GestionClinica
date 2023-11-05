@@ -19,7 +19,7 @@ class HistoriaClinica(models.Model):
 class Orden(models.Model):
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     medico = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    fecha_solicitud = models.DateTimeField(default=timezone.now)
+    fecha_solicitud = models.DateField(default=timezone.now)
     TIPOS_ORDEN = (
         ('medicamento', 'Medicamento'),
         ('procedimiento', 'Procedimiento'),
@@ -27,7 +27,8 @@ class Orden(models.Model):
         ('ayuda_diagnostica', 'Ayuda Diagnóstica'),
     )
     tipo_orden = models.CharField(max_length=20, choices=TIPOS_ORDEN)
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=200,blank=True)
+    cerrada = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Orden de {self.get_tipo_orden_display()} para {self.paciente.nombre_completo} ({self.fecha_solicitud})'
@@ -39,6 +40,7 @@ class OrdenMedicamento(models.Model):
     dosis = models.CharField(max_length=50)
     duracion_tratamiento = models.CharField(max_length=50)
     costo = models.DecimalField(max_digits=10, decimal_places=2)
+    cerrada = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Orden de Medicamento: {self.nombre_medicamento} para {self.orden.paciente.nombre_completo}'
@@ -51,6 +53,7 @@ class OrdenProcedimiento(models.Model):
     frecuencia = models.CharField(max_length=50)
     costo = models.DecimalField(max_digits=10, decimal_places=2)
     requiere_asistencia_especialista = models.BooleanField()
+    cerrada = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Orden de Procedimiento: {self.nombre_procedimiento} para {self.orden.paciente.nombre_completo}'
@@ -61,7 +64,5 @@ class OrdenAyudaDiagnostica(models.Model):
     nombre_ayuda_diagnostica = models.CharField(max_length=200)
     cantidad = models.IntegerField(verbose_name="cantidad")
     requiere_asistencia_especialista = models.BooleanField()
-    finalizado = models.BooleanField(default=False)
     resultados = models.CharField(max_length=2000,blank=True)
-
-
+    cerrada = models.BooleanField(default=False)

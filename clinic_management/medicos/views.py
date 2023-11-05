@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import HistoriaClinicaForm, OrdenMedicamentoForm
 from user.models import Usuario
 from personaladministrativo.models import Paciente
-from .models import HistoriaClinica
+from .models import *
 
 def crear_historia_clinica(request):
     if request.method == 'POST':
@@ -72,19 +72,57 @@ def agregar_ordenes(request):
     return render(request,'elegir_orden.html')
 
 def agregar_ordenes_con_id(request, id_historia_medica):
+    
+    try:
+        historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica,cerrada=False)
+    except:
+        return redirect('agregar_ordenes')
+    
     return render(request, 'elegir_orden_con_id.html', {'id_historia_medica': id_historia_medica})
 
 def agregar_medicamento(request, id_historia_medica):
-    #historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
-
+    historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
+    
+    # Verifica si existe una orden de Ayuda Diagnóstica sin cerrar
+    if historia_clinica.ordenes.filter(tipo_orden='ayuda_diagnostica', cerrada=False).exists():
+        # Si existe una orden de Ayuda Diagnóstica sin cerrar, no se permite crear una orden de medicamento
+        return redirect('agregar_ordenes', id_historia_medica=id_historia_medica)
+    
     if request.method == 'POST':
         form = OrdenMedicamentoForm(request.POST)
         if form.is_valid():
-            orden_medicamento = form.save(commit=False)
-            orden_medicamento.orden = 1 #historia_clinica
-            orden_medicamento.save()
-            return redirect('agregar_ordenes', id_historia_medica=id_historia_medica)
+            # Busca el número de ítem máximo en las órdenes de medicamento de la historia clínica actual
+            max_item = historia_clinica.ordenes.filter(
+                tipo_orden='medicamento',
+                medicamentos__isnull=False,
+            ).aggregate(models.Max('medicamentos__numero_item'))['medicamentos__numero_item__max']
+            
+            # Asigna el nuevo número de ítem
+            numero_item = max_item + 1 if max_item is not None else 1
 
+            nueva_orden = Orden(
+                    paciente=historia_clinica.paciente,
+                    medico=historia_clinica.medico,
+                    tipo_orden='medicamento',  # Tipo de orden Medicamento
+            )
+
+            nueva_orden.save()
+
+            # Crea una nueva orden de medicamento
+            orden_medicamento = OrdenMedicamento(
+                orden=nueva_orden,
+                numero_item=numero_item,
+                nombre_medicamento=form.cleaned_data['nombre_medicamento'],
+                dosis=form.cleaned_data['dosis'],
+                duracion_tratamiento=form.cleaned_data['duracion_tratamiento'],
+                costo=form.cleaned_data['costo'],
+            )
+            orden_medicamento.save()
+
+            # Agrega la nueva orden de medicamento a la historia clínica
+            historia_clinica.ordenes.add(orden_medicamento.orden)
+
+            return redirect('agregar_ordenes_con_id', id_historia_medica=id_historia_medica)
     else:
         form = OrdenMedicamentoForm()
 
