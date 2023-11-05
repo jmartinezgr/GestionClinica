@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import HistoriaClinicaForm, OrdenMedicamentoForm, OrdenProcedimientoForm, OrdenAyudaDiagnosticaForm
+from .forms import HistoriaClinicaForm, OrdenMedicamentoForm, OrdenProcedimientoForm, OrdenAyudaDiagnosticaForm, OrdenAyudaDiagnosticaFinalForm
 from user.models import Usuario
 from personaladministrativo.models import Paciente
 from .models import *
@@ -203,3 +203,119 @@ def agregar_ayuda_diagnostica(request, id_historia_medica):
         form = OrdenAyudaDiagnosticaForm()
 
     return render(request, 'agregar_ayuda_diagnostica.html', {'form': form})
+
+def buscar_estado_historia(request):
+        
+    if request.method == 'POST':
+        numero_identificacion = request.POST.get('numero_identificacion')
+        try:
+            paciente = Paciente.objects.get(numero_identificacion=numero_identificacion)
+        except:
+            return redirect('agregar_ordenes')
+        
+        try:
+            historia_clinica = HistoriaClinica.objects.get(paciente=paciente,cerrada=False)
+        except:
+            return redirect('agregar_ordenes')
+        
+        return redirect('estado_historia',historia_clinica.id)
+    
+    return render(request,'elegir_orden.html')
+
+
+def estado_historia(request, id_historia_medica):
+    historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
+    paciente_nombre = historia_clinica.paciente.nombre_completo
+
+    # Filtrar órdenes de diferentes tipos
+    ordenes_medicamentos = historia_clinica.ordenes.filter(tipo_orden='medicamento', cerrada=False)
+    ordenes_procedimientos = historia_clinica.ordenes.filter(tipo_orden='procedimiento', cerrada=False)
+    ordenes_ayuda_diagnostica = historia_clinica.ordenes.filter(tipo_orden='ayuda_diagnostica', cerrada=False)
+
+    # Recopilamos información detallada de las órdenes de medicamentos
+    detalles_ordenes_medicamentos = []
+    for orden in ordenes_medicamentos:
+        orden_medicamento = OrdenMedicamento.objects.get(orden=orden)
+        detalle = {
+            'id': orden.id,
+            'nombre_medicamento': orden_medicamento.nombre_medicamento,
+            'dosis': orden_medicamento.dosis,
+            'duracion_tratamiento': orden_medicamento.duracion_tratamiento,
+        }
+        detalles_ordenes_medicamentos.append(detalle)
+
+    # Recopilamos información detallada de las órdenes de procedimientos
+    detalles_ordenes_procedimientos = []
+    for orden in ordenes_procedimientos:
+        orden_procedimiento = OrdenProcedimiento.objects.get(orden=orden)
+        detalle = {
+            'id': orden.id,
+            'nombre_procedimiento': orden_procedimiento.nombre_procedimiento,
+            'numero_veces': orden_procedimiento.numero_veces,
+            'frecuencia': orden_procedimiento.frecuencia,
+        }
+        detalles_ordenes_procedimientos.append(detalle)
+
+    # Recopilamos información detallada de las órdenes de ayuda diagnóstica
+    detalles_ordenes_ayuda_diagnostica = []
+    for orden in ordenes_ayuda_diagnostica:
+        orden_ayuda_diagnostica = OrdenAyudaDiagnostica.objects.get(orden=orden)
+        detalle = {
+            'id': orden.id,
+            'nombre_ayuda_diagnostica': orden_ayuda_diagnostica.nombre_ayuda_diagnostica,
+            'cantidad': orden_ayuda_diagnostica.cantidad,
+            'requiere_asistencia_especialista': orden_ayuda_diagnostica.requiere_asistencia_especialista,
+        }
+        detalles_ordenes_ayuda_diagnostica.append(detalle)
+
+    return render(request, 'estado_historia_clinica.html', {
+        'historia_clinica': historia_clinica,
+        'paciente_nombre': paciente_nombre,
+        'detalles_ordenes_medicamentos': detalles_ordenes_medicamentos,
+        'detalles_ordenes_procedimientos': detalles_ordenes_procedimientos,
+        'detalles_ordenes_ayuda_diagnostica': detalles_ordenes_ayuda_diagnostica,
+    })
+
+def cerrar_orden(request, id_orden):
+    orden = Orden.objects.get(id=id_orden)
+
+    if orden.tipo_orden == 'medicamento':
+        # Cerrar orden de medicamento
+        medicamento = OrdenMedicamento.objects.get(orden=orden)
+        medicamento.cerrada = True
+        medicamento.save()
+    elif orden.tipo_orden == 'procedimiento':
+        # Cerrar orden de procedimiento
+        procedimiento = OrdenProcedimiento.objects.get(orden=orden)
+        procedimiento.cerrada = True
+        procedimiento.save()
+    elif orden.tipo_orden == 'ayuda_diagnostica':
+        # Redirigir a la vista para cerrar Ayuda Diagnóstica
+        return redirect('cerrar_ayuda_diagnostica', id_orden=id_orden)
+
+    # Marcar la orden principal como cerrada
+    orden.cerrada = True
+    orden.save()
+
+    # Redirigir a la página de estado de la historia clínica
+    return redirect('estado_historia', id_historia_medica=orden.historias_clinicas.first().id)
+
+def cerrar_ayuda_diagnostica(request, id_orden):
+    orden_ayuda_diagnostica = OrdenAyudaDiagnostica.objects.get(orden_id=id_orden)
+
+    if request.method == 'POST':
+        form = OrdenAyudaDiagnosticaFinalForm(request.POST, instance=orden_ayuda_diagnostica)
+        if form.is_valid():
+            form.save()
+
+            # Marcar la orden de Ayuda Diagnóstica como cerrada
+            orden_ayuda_diagnostica.cerrada = True
+            orden_ayuda_diagnostica.save()
+
+            # Redirigir a la página de estado de la historia clínica
+            return redirect('estado_historia', id_historia_medica=orden_ayuda_diagnostica.orden.historias_clinicas.first().id)
+    else:
+        form = OrdenAyudaDiagnosticaFinalForm(instance=orden_ayuda_diagnostica)
+
+    return render(request, 'cerrar_ayuda_diagnostica.html', {'form': form, 'orden_id': id_orden})
+        

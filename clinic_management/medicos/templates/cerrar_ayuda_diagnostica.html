@@ -1,39 +1,20 @@
 {% extends 'layouts/layout.html' %}
 
-{% block navbar %}
-<li class="nav-item">
-    <a class="nav-link" href={% url 'crear_historia_clinica' %}> Crear Historia Clinica </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href={% url 'agregar_ordenes' %}> Actualizar Información </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href={% url 'buscar_estado_historia' %}> Cambiar Estados Historia Clinica </a>   
-</li>
-<li class="nav-item">
-    <a class="nav-link" href=""> Seguros Médicos </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'logout_view' %}"> Cerrar Sesión </a>
-</li>
-{% endblock %}
-
-
 {% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card mt-5">
-                <div class="card-header text-center">Agregar Ayuda Diagnostica</div>
+                <div class="card-header text-center">Cerrar Ayuda Diagnóstica</div>
                 <div class="card-body">
                     {% if messages %}
                         {% for message in messages %}
                             {% if message.tags == 'success' %}
-                                <div class="alert alert-success" role="alert" id="Errorcito">
+                                <div class="alert alert-success" role="alert" id="SuccessMessage">
                                     {{ message }}
                                 </div>
                             {% elif message.tags == 'error' %}
-                                <div class="alert alert-danger" role="alert" id="Errorcito">
+                                <div class="alert alert-danger" role="alert" id="ErrorMessage">
                                     {{ message }}
                                 </div>
                             {% endif %}
@@ -42,7 +23,7 @@
                     <form method="post">
                         {% csrf_token %}
                         {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary">Guardar Ayuda Diagnostica</button>
+                        <button type="submit" class="btn btn-primary">Cerrar Ayuda Diagnóstica</button>
                     </form>
                 </div>
             </div>
@@ -51,7 +32,11 @@
 </div>
 <script>
     setTimeout(function () {
-        var errorMessage = document.getElementById("Errorcito");
+        var successMessage = document.getElementById("SuccessMessage");
+        var errorMessage = document.getElementById("ErrorMessage");
+        if (successMessage) {
+            successMessage.style.display = "none";
+        }
         if (errorMessage) {
             errorMessage.style.display = "none";
         }

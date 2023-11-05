@@ -1,0 +1,84 @@
+{% extends "layouts/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card mt-5">
+                <div class="card-header text-center">Estado de la Historia Clínica</div>
+                <div class="card-body">
+                    <!-- Tarjeta con el nombre del paciente y número de historia médica -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ paciente_nombre }} - Historia Médica #{{ historia_clinica.id }}</h5>
+                            <a href="#" class="btn btn-danger float-end">Cerrar Historia Médica</a>
+                        </div>
+                    </div>
+
+                    <!-- Órdenes de Medicamentos -->
+                    {% if detalles_ordenes_medicamentos %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Órdenes de Medicamentos</h2>
+                            <!-- Bucle para mostrar órdenes de medicamentos -->
+                            {% for orden_medicamento in detalles_ordenes_medicamentos %}
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ orden_medicamento.id }} - {{ orden_medicamento.nombre_medicamento }}</h5>
+                                        <p>Dosis: {{ orden_medicamento.dosis }}</p>
+                                        <p>Duración del tratamiento: {{ orden_medicamento.duracion_tratamiento }}</p>
+                                        <a href="{% url 'cerrar_orden' orden_medicamento.id %}" class="btn btn-danger">Cerrar Orden</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Órdenes de Procedimientos -->
+                    {% if detalles_ordenes_procedimientos %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Órdenes de Procedimientos</h2>
+                            <!-- Bucle para mostrar órdenes de procedimientos -->
+                            {% for orden_procedimiento in detalles_ordenes_procedimientos %}
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ orden_procedimiento.id }} - {{ orden_procedimiento.nombre_procedimiento }}</h5>
+                                        <p>Número de veces: {{ orden_procedimiento.numero_veces }}</p>
+                                        <p>Frecuencia: {{ orden_procedimiento.frecuencia }}</p>
+                                        <a href="{% url 'cerrar_orden' orden_procedimiento.id %}" class="btn btn-danger">Cerrar Orden</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Órdenes de Ayuda Diagnóstica -->
+                    {% if detalles_ordenes_ayuda_diagnostica %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Órdenes de Ayuda Diagnóstica</h2>
+                            <!-- Bucle para mostrar órdenes de ayuda diagnóstica -->
+                            {% for orden_ayuda_diagnostica in detalles_ordenes_ayuda_diagnostica %}
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ orden_ayuda_diagnostica.id }} - {{ orden_ayuda_diagnostica.nombre_ayuda_diagnostica }}</h5>
+                                        <p>Cantidad: {{ orden_ayuda_diagnostica.cantidad }}</p>
+                                        <p>Requiere asistencia de especialista: {{ orden_ayuda_diagnostica.requiere_asistencia_especialista }}</p>
+                                        <a href="{% url 'cerrar_orden' orden_ayuda_diagnostica.id %}" class="btn btn-danger">Cerrar Orden</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
