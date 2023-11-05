@@ -23,7 +23,7 @@ def login_view(request):
                 elif user.rol.name == 'Personal Administrativo':
                     return redirect('home_personal_administrativo')
                 elif user.rol.name == 'Médicos':
-                    return redirect('crear_historia_clinica')
+                    return redirect('home_medicos')
                     
                 print(user.rol.name)                
             else:

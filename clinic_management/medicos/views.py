@@ -191,6 +191,7 @@ def agregar_ayuda_diagnostica(request, id_historia_medica):
                 orden=nueva_orden,
                 nombre_ayuda_diagnostica=form.cleaned_data['nombre_ayuda_diagnostica'],
                 cantidad=form.cleaned_data['cantidad'],
+                costo=form.cleaned_data['costo'],
                 requiere_asistencia_especialista=form.cleaned_data['requiere_asistencia_especialista'],
             )
             orden_ayuda_diagnostica.save()

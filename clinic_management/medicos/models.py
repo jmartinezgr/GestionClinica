@@ -12,6 +12,7 @@ class HistoriaClinica(models.Model):
     diagnostico = models.TextField()
     ordenes = models.ManyToManyField('Orden', related_name='historias_clinicas')
     cerrada = models.BooleanField(default=False)
+    pagada = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Historia Clínica de {self.paciente.nombre_completo} ({self.fecha})'
@@ -65,4 +66,5 @@ class OrdenAyudaDiagnostica(models.Model):
     cantidad = models.IntegerField(verbose_name="cantidad")
     requiere_asistencia_especialista = models.BooleanField()
     resultados = models.CharField(max_length=2000,blank=True)
+    costo = models.DecimalField(max_digits=10, decimal_places=2,default=50000)
     cerrada = models.BooleanField(default=False)

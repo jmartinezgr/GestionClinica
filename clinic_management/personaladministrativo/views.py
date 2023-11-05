@@ -1,8 +1,12 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, HttpResponse
 from django.contrib.auth.decorators import login_required 
 from django.contrib import messages
 import requests
-
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from .models import Paciente
+from medicos.models import *
 from .forms import PacienteForm
 
 
@@ -126,3 +130,61 @@ def actualizar_paciente(request, numero_identificacion):
         form = PacienteForm(initial=paciente_data)
 
     return render(request, 'actualizar_paciente.html', {'form': form, 'numero_identificacion': numero_identificacion})
+
+@login_required
+def buscar_paciente_facturacion(request):
+    if request.method == 'POST':
+        numero_identificacion = request.POST.get('numero_identificacion')
+
+        api_url = f'http://127.0.0.1:8000/api/pacientes/{numero_identificacion}/'
+        response = requests.get(api_url)
+
+        if response.status_code == 200:
+            return redirect('generar_factura', numero_identificacion=numero_identificacion)
+        else:
+            # Si no se encontró al paciente, muestra un mensaje de error
+             messages.error(request, "No se ha encontrado al paciente con el número de identificación proporcionado.")
+
+    return render(request, 'buscar_paciente_facturacion.html')
+
+def calcular_costo_bruto(historia_clinica):
+    costo_bruto = 0
+
+    print(historia_clinica.ordenes.all())
+
+    # Recorrer todas las órdenes en la historia clínica
+
+    for orden in historia_clinica.ordenes.all():
+        if orden.tipo_orden == 'medicamento':
+            # Si es una orden de medicamento, obtener y sumar el costo de cada medicamento
+            orden_medicamento = OrdenMedicamento.objects.get(orden=orden)
+            costo_bruto += orden_medicamento.costo
+        elif orden.tipo_orden == 'procedimiento':
+            # Si es una orden de procedimiento, obtener y sumar el costo de cada procedimiento
+            orden_medicamento = OrdenProcedimiento.objects.get(orden=orden)
+            costo_bruto += orden_medicamento.costo
+        elif orden.tipo_orden == 'hospitalizacion':
+           pass
+    return costo_bruto
+
+def generar_factura(request, numero_identificacion):
+    try:
+        paciente = Paciente.objects.get(numero_identificacion=numero_identificacion)
+        historia_clinica = HistoriaClinica.objects.filter(paciente=paciente, cerrada = True,pagada=False).first()
+
+        if not historia_clinica:
+            return HttpResponse("No hay procedimientos pendientes de facturación para este paciente.")
+
+        # Realizar cálculos para costo_bruto y costo_final
+        costo_bruto = calcular_costo_bruto(historia_clinica)
+        #costo_final = calcular_costo_final(costo_bruto)
+
+        context = {
+            'costo_bruto': costo_bruto,
+            'costo_final': paciente.calcular_copago(costo_bruto),
+            'numero_identificacion': numero_identificacion
+        }
+
+        return render(request, 'facturacion.html', context)
+    except Paciente.DoesNotExist:
+        return HttpResponse("El paciente no existe.")

@@ -32,7 +32,6 @@ class Paciente(models.Model):
             if self.copagos_acumulados > 1000000:
                 # No se cobra más copago
                 copago = 0
-                self.copagos_acumulados = 0  # Reiniciar acumulado
             else:
                 copago = 50000
                 self.copagos_acumulados += copago
@@ -40,14 +39,8 @@ class Paciente(models.Model):
             # Sin seguro o póliza inactiva
             copago = costo_servicio
 
+        self.save()
         return copago
-
-    # Método para registrar una atención médica
-    def registrar_atencion_medica(self, costo_servicio):
-        copago = self.calcular_copago(costo_servicio)
-        if copago > 0:
-            # Generar factura para el paciente
-            #factura = Factura.objects.create(paciente=self, costo_servicio=costo_servicio, copago=copago)
-            f#actura.save()
-        # Actualizar los copagos acumulados
+    
+    def pago(self):
         self.save()

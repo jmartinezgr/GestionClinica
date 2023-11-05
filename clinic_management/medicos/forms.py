@@ -108,7 +108,7 @@ class OrdenProcedimientoForm(forms.ModelForm):
 class OrdenAyudaDiagnosticaForm(forms.ModelForm):
     class Meta:
         model = OrdenAyudaDiagnostica
-        fields = ['nombre_ayuda_diagnostica', 'cantidad', 'requiere_asistencia_especialista']
+        fields = ['nombre_ayuda_diagnostica', 'cantidad', 'requiere_asistencia_especialista','costo']
 
     nombre_ayuda_diagnostica = forms.CharField(
         label='Nombre de la Ayuda Diagnóstica',
@@ -125,6 +125,13 @@ class OrdenAyudaDiagnosticaForm(forms.ModelForm):
         label='Requiere Asistencia de Especialista',
         required=False,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input ml-2'})
+    )
+
+    costo = forms.DecimalField(
+        label='Costo',
+        max_digits=10,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
     )
 
 class OrdenAyudaDiagnosticaFinalForm(forms.ModelForm):
