@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import HistoriaClinicaForm, OrdenMedicamentoForm
+from .forms import HistoriaClinicaForm, OrdenMedicamentoForm, OrdenProcedimientoForm
 from user.models import Usuario
 from personaladministrativo.models import Paciente
 from .models import *
@@ -127,3 +127,46 @@ def agregar_medicamento(request, id_historia_medica):
         form = OrdenMedicamentoForm()
 
     return render(request, 'agregar_medicamento.html', {'form': form})
+
+def agregar_procedimiento(request, id_historia_medica):
+    historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
+
+    if request.method == 'POST':
+        form = OrdenProcedimientoForm(request.POST)
+        if form.is_valid():
+            # Crear una nueva orden
+            nueva_orden = Orden(
+                paciente=historia_clinica.paciente,
+                medico=historia_clinica.medico,
+                tipo_orden='procedimiento',  # Tipo de orden Procedimiento
+            )
+            nueva_orden.save()
+
+            max_item = historia_clinica.ordenes.filter(
+                tipo_orden='procedimiento',
+                medicamentos__isnull=False,
+            ).aggregate(models.Max('medicamentos__numero_item'))['medicamentos__numero_item__max']
+            
+            # Asigna el nuevo número de ítem
+            numero_item = max_item + 1 if max_item is not None else 1
+
+            # Crear una nueva orden de procedimiento
+            orden_procedimiento = OrdenProcedimiento(
+                orden=nueva_orden,
+                numero_item=numero_item,  # Asignar el número de ítem apropiado
+                nombre_procedimiento=form.cleaned_data['nombre_procedimiento'],
+                numero_veces=form.cleaned_data['numero_veces'],
+                frecuencia=form.cleaned_data['frecuencia'],
+                costo=form.cleaned_data['costo'],
+                requiere_asistencia_especialista=form.cleaned_data['requiere_asistencia_especialista'],
+            )
+            orden_procedimiento.save()
+
+            # Agregar la nueva orden de procedimiento a la historia clínica
+            historia_clinica.ordenes.add(nueva_orden)
+
+            return redirect('agregar_ordenes_con_id', id_historia_clinica=id_historia_medica)
+    else:
+        form = OrdenProcedimientoForm()
+
+    return render(request, 'agregar_procedimiento.html', {'form': form})

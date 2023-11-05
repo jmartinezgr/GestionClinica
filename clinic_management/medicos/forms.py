@@ -1,5 +1,5 @@
 from django import forms
-from .models import HistoriaClinica,OrdenMedicamento
+from .models import HistoriaClinica,OrdenMedicamento,OrdenProcedimiento
 from datetime import date  # Importa la clase date para obtener la fecha actual
 
 class HistoriaClinicaForm(forms.ModelForm):
@@ -68,4 +68,39 @@ class OrdenMedicamentoForm(forms.ModelForm):
         max_digits=10,
         decimal_places=2,
         widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+
+class OrdenProcedimientoForm(forms.ModelForm):
+    class Meta:
+        model = OrdenProcedimiento
+        fields = ['nombre_procedimiento', 'numero_veces', 'frecuencia', 'costo', 'requiere_asistencia_especialista']
+
+    nombre_procedimiento = forms.CharField(
+        label='Nombre del Procedimiento',
+        max_length=200,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    numero_veces = forms.IntegerField(
+        label='Número de Veces',
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+
+    frecuencia = forms.CharField(
+        label='Frecuencia',
+        max_length=50,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    costo = forms.DecimalField(
+        label='Costo',
+        max_digits=10,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+
+    requiere_asistencia_especialista = forms.BooleanField(
+        label='Requiere Asistencia de Especialista',
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
