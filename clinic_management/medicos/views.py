@@ -220,7 +220,7 @@ def buscar_estado_historia(request):
         
         return redirect('estado_historia',historia_clinica.id)
     
-    return render(request,'elegir_orden.html')
+    return render(request,'elegir_orden_historia.html')
 
 
 def estado_historia(request, id_historia_medica):
@@ -308,14 +308,27 @@ def cerrar_ayuda_diagnostica(request, id_orden):
         if form.is_valid():
             form.save()
 
+            orden = Orden.objects.get(id=id_orden)
+
+            orden.cerrada = True
+            orden.save()
+
             # Marcar la orden de Ayuda Diagnóstica como cerrada
             orden_ayuda_diagnostica.cerrada = True
             orden_ayuda_diagnostica.save()
-
+            
             # Redirigir a la página de estado de la historia clínica
             return redirect('estado_historia', id_historia_medica=orden_ayuda_diagnostica.orden.historias_clinicas.first().id)
     else:
         form = OrdenAyudaDiagnosticaFinalForm(instance=orden_ayuda_diagnostica)
 
     return render(request, 'cerrar_ayuda_diagnostica.html', {'form': form, 'orden_id': id_orden})
-        
+
+def cerrar_historia_clinica(request, id_historia_medica):
+
+    historia = HistoriaClinica.objects.get(id=id_historia_medica)
+
+    historia.cerrada = True
+    historia.save()
+
+    return redirect('crear_historia_clinica')

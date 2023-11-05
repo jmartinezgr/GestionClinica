@@ -1,6 +1,21 @@
 {% extends "layouts/layout.html" %}
 {% load static %}
 
+{% block navbar %}
+<li class="nav-item">
+    <a class="nav-link" href={% url 'crear_historia_clinica' %}> Crear Historia Clinica </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href={% url 'agregar_ordenes' %}> Agregar Información </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href={% url 'buscar_estado_historia' %}> Cambiar Estados Historia Clinica </a>   
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'logout_view' %}"> Cerrar Sesión </a>
+</li>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -12,10 +27,13 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <h5 class="card-title">{{ paciente_nombre }} - Historia Médica #{{ historia_clinica.id }}</h5>
-                            <a href="#" class="btn btn-danger float-end">Cerrar Historia Médica</a>
+                            {% if not detalles_ordenes_medicamentos and not detalles_ordenes_procedimientos and not detalles_ordenes_ayuda_diagnostica %}
+                                <a href="{% url 'cerrar_historia_clinica' historia_clinica.id%}" class="btn btn-danger float-end">Cerrar Historia Médica</a>
+                            {% else %}
+                                <button class="btn btn-danger float-end" disabled>Cerrar Historia Médica</button>    
+                            {% endif %}
                         </div>
                     </div>
-
                     <!-- Órdenes de Medicamentos -->
                     {% if detalles_ordenes_medicamentos %}
                     <div class="card">

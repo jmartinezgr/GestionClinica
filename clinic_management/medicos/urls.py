@@ -13,4 +13,5 @@ urlpatterns = [
     path('home/medicos/estado_historia/<int:id_historia_medica>/', views.estado_historia, name='estado_historia'),
     path('home/medicos/cerrar_orden/<int:id_orden>/', views.cerrar_orden, name='cerrar_orden'),
     path('home/medicos/cerrar_ayuda_diagnostica/<int:id_orden>/', views.cerrar_ayuda_diagnostica, name='cerrar_ayuda_diagnostica'),
+    path('home/medicos/cerrar_historia_medica/<int:id_historia_medica>/', views.cerrar_historia_clinica, name='cerrar_historia_clinica'),
 ]

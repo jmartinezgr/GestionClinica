@@ -11,9 +11,6 @@
     <a class="nav-link" href={% url 'buscar_estado_historia' %}> Cambiar Estados Historia Clinica </a>   
 </li>
 <li class="nav-item">
-    <a class="nav-link" href=""> Seguros Médicos </a>
-</li>
-<li class="nav-item">
     <a class="nav-link" href="{% url 'logout_view' %}"> Cerrar Sesión </a>
 </li>
 {% endblock %}
@@ -39,7 +36,7 @@
                         {% endfor %}
                     {% endif %}
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Medicamento</h5>
@@ -48,7 +45,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Procedimiento</h5>
@@ -57,7 +54,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Ayuda Diagnóstica</h5>
@@ -66,6 +63,16 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Hospitalizar</h5>
+                                    <p class="card-text">Hospitalizar al paciente.</p>
+                                    <a href="" class="btn btn-primary">Ordenar Hispializacion</a>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
