@@ -23,7 +23,7 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-6 align-items-center">
             <div class="card">
-                <div class="card-header text-center">Búsqueda</div>
+                <div class="card-header text-center">Buscar Historia Clinica</div>
                   <div class="card-body" >
                       {% if messages %}
                           {% for message in messages %}
@@ -42,7 +42,7 @@
                           {% csrf_token %}
                           <div class="form-group">
                               <div class="input-group mb-3">
-                                  <input type="text" name="numero_identificacion" class="form-control" placeholder="Ingrese el número de identificación" aria-label="Número de Identificación" aria-describedby="search-button">
+                                  <input type="text" name="numero_identificacion" class="form-control" placeholder="Ingrese el número de identificación del paciente" aria-label="Número de Identificación" aria-describedby="search-button">
                                   <div class="input-group-append">
                                       <button class="btn btn-primary" type="submit" id="search-button">
                                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">

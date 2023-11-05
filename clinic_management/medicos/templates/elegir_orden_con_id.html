@@ -25,6 +25,19 @@
             <div class="card mt-5">
                 <div class="card-header text-center">Agregar Órdenes a la Historia Clínica</div>
                 <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success" role="alert" id="Errorcito">
+                                    {{ message }}
+                                </div>
+                            {% elif message.tags == 'error' %}
+                                <div class="alert alert-danger" role="alert" id="Errorcito">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                     <div class="row">
                         <div class="col-md-4">
                             <div class="card">
@@ -49,7 +62,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Ayuda Diagnóstica</h5>
                                     <p class="card-text">Agregar una orden de ayuda diagnóstica.</p>
-                                    <a href="" class="btn btn-primary">Agregar Ayuda Diagnóstica</a>
+                                    <a href="{% url 'agregar_ayuda_diagnostica' id_historia_medica %}" class="btn btn-primary">Agregar Ayuda Diagnóstica</a>
                                 </div>
                             </div>
                         </div>
@@ -59,4 +72,12 @@
         </div>
     </div>
 </div>
+<script>
+    setTimeout(function () {
+        var errorMessage = document.getElementById("Errorcito");
+        if (errorMessage) {
+            errorMessage.style.display = "none";
+        }
+    }, 4000);
+</script>
 {% endblock %}

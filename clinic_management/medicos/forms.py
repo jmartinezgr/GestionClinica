@@ -1,5 +1,5 @@
 from django import forms
-from .models import HistoriaClinica,OrdenMedicamento,OrdenProcedimiento
+from .models import HistoriaClinica,OrdenMedicamento,OrdenProcedimiento, OrdenAyudaDiagnostica
 from datetime import date  # Importa la clase date para obtener la fecha actual
 
 class HistoriaClinicaForm(forms.ModelForm):
@@ -102,5 +102,39 @@ class OrdenProcedimientoForm(forms.ModelForm):
     requiere_asistencia_especialista = forms.BooleanField(
         label='Requiere Asistencia de Especialista',
         required=False,
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input ml-2'}),
+    )
+
+class OrdenAyudaDiagnosticaForm(forms.ModelForm):
+    class Meta:
+        model = OrdenAyudaDiagnostica
+        fields = ['nombre_ayuda_diagnostica', 'cantidad', 'requiere_asistencia_especialista']
+
+    nombre_ayuda_diagnostica = forms.CharField(
+        label='Nombre de la Ayuda Diagnóstica',
+        max_length=200,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    cantidad = forms.IntegerField(
+        label='Cantidad',
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+
+    requiere_asistencia_especialista = forms.BooleanField(
+        label='Requiere Asistencia de Especialista',
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input ml-2'})
+    )
+
+class OrdenAyudaDiagnosticaFinalForm(forms.ModelForm):
+    
+    class Meta:
+        model = OrdenAyudaDiagnostica
+        fields = ['resultados']
+
+    resultados = forms.CharField(
+        label='Resultados',
+        max_length=2000,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4})
     )

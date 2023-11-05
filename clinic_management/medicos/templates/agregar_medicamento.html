@@ -26,6 +26,19 @@
             <div class="card mt-5">
                 <div class="card-header text-center">Agregar Medicamento</div>
                 <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success" role="alert" id="Errorcito">
+                                    {{ message }}
+                                </div>
+                            {% elif message.tags == 'error' %}
+                                <div class="alert alert-danger" role="alert" id="Errorcito">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                     <form method="post">
                         {% csrf_token %}
                         {{ form.as_p }}
@@ -36,4 +49,12 @@
         </div>
     </div>
 </div>
+<script>
+    setTimeout(function () {
+        var errorMessage = document.getElementById("Errorcito");
+        if (errorMessage) {
+            errorMessage.style.display = "none";
+        }
+    }, 4000);
+</script>
 {% endblock %}

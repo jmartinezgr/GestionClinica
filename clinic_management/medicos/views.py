@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from .forms import HistoriaClinicaForm, OrdenMedicamentoForm, OrdenProcedimientoForm
+from .forms import HistoriaClinicaForm, OrdenMedicamentoForm, OrdenProcedimientoForm, OrdenAyudaDiagnosticaForm
 from user.models import Usuario
 from personaladministrativo.models import Paciente
 from .models import *
+from django.contrib import messages
 
 def crear_historia_clinica(request):
     if request.method == 'POST':
@@ -170,3 +171,35 @@ def agregar_procedimiento(request, id_historia_medica):
         form = OrdenProcedimientoForm()
 
     return render(request, 'agregar_procedimiento.html', {'form': form})
+
+def agregar_ayuda_diagnostica(request, id_historia_medica):
+    historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
+
+    if request.method == 'POST':
+        form = OrdenAyudaDiagnosticaForm(request.POST)
+        if form.is_valid():
+            # Crear una nueva orden de ayuda diagnóstica
+            nueva_orden = Orden(
+                paciente=historia_clinica.paciente,
+                medico=historia_clinica.medico,
+                tipo_orden='ayuda_diagnostica',  # Tipo de orden Ayuda Diagnóstica
+            )
+            nueva_orden.save()
+
+            # Crear una nueva orden de ayuda diagnóstica
+            orden_ayuda_diagnostica = OrdenAyudaDiagnostica(
+                orden=nueva_orden,
+                nombre_ayuda_diagnostica=form.cleaned_data['nombre_ayuda_diagnostica'],
+                cantidad=form.cleaned_data['cantidad'],
+                requiere_asistencia_especialista=form.cleaned_data['requiere_asistencia_especialista'],
+            )
+            orden_ayuda_diagnostica.save()
+
+            # Agregar la nueva orden de ayuda diagnóstica a la historia clínica
+            historia_clinica.ordenes.add(nueva_orden)
+
+            return redirect('agregar_ordenes_con_id', id_historia_medica=id_historia_medica)
+    else:
+        form = OrdenAyudaDiagnosticaForm()
+
+    return render(request, 'agregar_ayuda_diagnostica.html', {'form': form})
