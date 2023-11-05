@@ -2,12 +2,16 @@ from django.shortcuts import render,redirect, HttpResponse
 from django.contrib.auth.decorators import login_required 
 from django.contrib import messages
 import requests
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from .models import Paciente
 from medicos.models import *
 from .forms import PacienteForm
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
 
 
 @login_required
@@ -177,7 +181,6 @@ def generar_factura(request, numero_identificacion):
 
         # Realizar cálculos para costo_bruto y costo_final
         costo_bruto = calcular_costo_bruto(historia_clinica)
-        #costo_final = calcular_costo_final(costo_bruto)
 
         context = {
             'costo_bruto': costo_bruto,
@@ -185,6 +188,102 @@ def generar_factura(request, numero_identificacion):
             'numero_identificacion': numero_identificacion
         }
 
+        if request.method == 'POST':
+            paciente.pago()
+            historia_clinica.pagada = True
+            historia_clinica.save()
+
+            return redirect("buscar_paciente_facturacion")
+
         return render(request, 'facturacion.html', context)
+
+    except Paciente.DoesNotExist:
+        return HttpResponse("El paciente no existe.")
+    
+def generar_pdf_factura(request, numero_identificacion, costo_bruto):
+    costo_bruto = float(costo_bruto)
+
+    try:
+        paciente = Paciente.objects.get(numero_identificacion=numero_identificacion)
+        historia_clinica = HistoriaClinica.objects.filter(paciente=paciente, cerrada=True, pagada=False).first()
+
+        if not historia_clinica:
+            return HttpResponse("No hay procedimientos pendientes de facturación para este paciente.")
+
+        # Crear un objeto PDF
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="factura_procedimientos_{numero_identificacion}.pdf"'
+        doc = SimpleDocTemplate(response, pagesize=letter)
+
+        # Crear una lista para los elementos que se añadirán al PDF
+        elements = []
+
+        # Crear un estilo para el texto del PDF
+        styles = getSampleStyleSheet()
+        normal_style = styles['Normal']
+
+        # Agregar información del paciente al PDF
+        elements.append(Paragraph("Información del Paciente", normal_style))
+        elements.append(Spacer(1, 12))
+        elements.append(Paragraph(f"Nombre del Paciente: {paciente.nombre_completo}", normal_style))
+        elements.append(Paragraph(f"Edad: {paciente.fecha_nacimiento}", normal_style))
+        elements.append(Paragraph(f"Cédula: {paciente.numero_identificacion}", normal_style))
+
+        # Listar todas las órdenes relacionadas con la historia clínica
+        ordenes = historia_clinica.ordenes.all()
+
+        for orden in ordenes:
+            elements.append(Spacer(1, 12))
+            elements.append(Paragraph(f'Tipo de Orden: {orden.get_tipo_orden_display()}', normal_style))
+            elements.append(Paragraph(f'Fecha de Solicitud: {orden.fecha_solicitud}', normal_style))
+
+            if orden.tipo_orden == 'medicamento':
+                # Si es una orden de medicamento, obtener y mostrar la información
+                elements.append(Paragraph("Detalles de la Orden de Medicamentos", normal_style))
+                medicamentos = OrdenMedicamento.objects.filter(orden=orden)
+                data = [["Nombre del Medicamento", "Dosis", "Duración del Tratamiento", "Costo"]]
+                for medicamento in medicamentos:
+                    data.append([medicamento.nombre_medicamento, medicamento.dosis, medicamento.duracion_tratamiento, medicamento.costo])
+                table = Table(data)
+            elif orden.tipo_orden == 'procedimiento':
+                # Si es una orden de procedimiento, obtener y mostrar la información
+                elements.append(Paragraph("Detalles de la Orden de Procedimientos", normal_style))
+                procedimientos = OrdenProcedimiento.objects.filter(orden=orden)
+                data = [["Nombre del Procedimiento", "Número de Veces", "Frecuencia", "Costo"]]
+                for procedimiento in procedimientos:
+                    data.append([procedimiento.nombre_procedimiento, procedimiento.numero_veces, procedimiento.frecuencia, procedimiento.costo])
+                table = Table(data)
+            elif orden.tipo_orden == 'ayuda_diagnostica':
+                # Si es una orden de ayuda diagnóstica, obtener y mostrar la información
+                elements.append(Paragraph("Detalles de la Orden de Ayuda Diagnóstica", normal_style))
+                ayudas_diagnosticas = OrdenAyudaDiagnostica.objects.filter(orden=orden)
+                data = [["Nombre de la Ayuda", "Cantidad", "Resultados", "Costo"]]
+                for ayuda_diagnostica in ayudas_diagnosticas:
+                    data.append([ayuda_diagnostica.nombre_ayuda_diagnostica, ayuda_diagnostica.cantidad, ayuda_diagnostica.resultados, ayuda_diagnostica.costo])
+                table = Table(data)
+
+            # Establecer un ancho fijo para todas las celdas de la tabla
+            # Establecer un ancho fijo para todas las celdas de la tabla
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('WIDTH', (0, 0), (-1, -1), 60),  # Ancho fijo para todas las celdas
+            ]))
+
+            elements.append(table)
+
+        # Agregar el costo final al PDF
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph(f'Costo Bruto: {costo_bruto}', normal_style))
+        elements.append(Paragraph(f'Costo Final: {paciente.calcular_copago(costo_bruto)}', normal_style))
+
+        doc.build(elements)
+
+        return response
     except Paciente.DoesNotExist:
         return HttpResponse("El paciente no existe.")

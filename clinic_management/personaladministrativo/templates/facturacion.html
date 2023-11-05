@@ -2,42 +2,43 @@
 
 {% block navbar %}
 <li class="nav-item">
-    <a class="nav-link" href={% url 'crear_paciente' %}> Registro de Pacientes </a>
+    <a class="nav-link" href="{% url 'crear_paciente' %}"> Registro de Pacientes </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href={% url 'buscar_paciente' %}> Actualizar Informacion </a>
+    <a class="nav-link" href="{% url 'buscar_paciente' %}"> Actualizar Información </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href=''> Facturación </a>
+    <a class="nav-link" href={% url 'buscar_paciente_facturacion' %}> Facturacion </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href=''> Seguros Medicos </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'logout_view' %}"> Cerrar Sesion </a>
+    <a class="nav-link" href="{% url 'logout_view' %}"> Cerrar Sesión </a>
 </li>
 {% endblock %}
 
 {% block content %}
-  <div class="container mt-4">
-    <div class="row justify-content-center align-items-center mt-5">
-      <div class="col-md-10">
-        <div class="card">
-          <div class="card-header text-center">Facturación</div>
-          <div class="card-body">
-            <!-- Contenido de la página de facturación -->
-            <h2>Detalles de Facturación</h2>
-            <p>Costo Bruto: ${{ costo_bruto }}</p>
-            <p>Costo Final: ${{ costo_final }}</p>
-        
-            <form method="post" action="">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-success">Pagar</button>
-            </form>
-            <!-- Fin del contenido de la página de facturación -->
-          </div>
+<div class="container mt-4">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header text-center">Facturación</div>
+                <div class="card-body">
+                    <!-- Contenido de la página de facturación -->
+                    <h2 class="mb-4">Detalles de Facturación</h2>
+                    <p>Costo Bruto: ${{ costo_bruto }}</p>
+                    <p>Costo Final: ${{ costo_final }}</p>
+
+                    <!-- Agrega el botón de descarga PDF y el botón de pagar -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'generar_pdf_factura' numero_identificacion=numero_identificacion costo_bruto=costo_bruto %}" class="btn btn-primary">Descargar PDF</a>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Pagar</button>
+                        </form>
+                    </div>
+                    <!-- Fin del contenido de la página de facturación -->
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 {% endblock %}
