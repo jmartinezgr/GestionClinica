@@ -1,0 +1,32 @@
+{% extends 'layouts/layout.html' %}
+
+{% block navbar %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'visitas_pendientes' %}"> Proximas Visitas </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href=''> Registrar Visitas </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'logout_view' %}"> Cerrar Sesion </a>
+</li>
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Visitas Pendientes</h2>
+        <div class="row">
+            {% for visita in visitas_pendientes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Visita a {{ visita.paciente.nombre_completo }} cedula: {{ visita.paciente.numero_identificacion }} </h5>
+                            <p class="card-text">Fecha de Asignacion: {{ visita.fecha }}</p>
+                            <a href="{% url 'detalle_visita' visita.id %}" class="btn btn-primary">Registrar Visita</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -9,6 +9,7 @@ urlpatterns = [
     path('home/medicos/agregar_medicamento/<int:id_historia_medica>/', views.agregar_medicamento, name='agregar_medicamento'),
     path('home/medicos/agregar_procedimiento/<int:id_historia_medica>/', views.agregar_procedimiento, name='agregar_procedimiento'),
     path('home/medicos/agregar_ayuda_diagnostica/<int:id_historia_medica>/', views.agregar_ayuda_diagnostica, name='agregar_ayuda_diagnostica'),
+    path('home/medicos/agregar_hospitalizacion/<int:id_historia_medica>/',views.agregar_hospitalizacion,name="agregar_hospitalizacion"),
     path('home/medicos/estado_historia/', views.buscar_estado_historia, name='buscar_estado_historia'),
     path('home/medicos/estado_historia/<int:id_historia_medica>/', views.estado_historia, name='estado_historia'),
     path('home/medicos/cerrar_orden/<int:id_orden>/', views.cerrar_orden, name='cerrar_orden'),

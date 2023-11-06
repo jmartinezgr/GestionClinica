@@ -1,6 +1,7 @@
 from django import forms
 from .models import HistoriaClinica,OrdenMedicamento,OrdenProcedimiento, OrdenAyudaDiagnostica
 from datetime import date  # Importa la clase date para obtener la fecha actual
+from enfermeras.models import Hospitalizacion
 
 class HistoriaClinicaForm(forms.ModelForm):
     class Meta:
@@ -145,3 +146,13 @@ class OrdenAyudaDiagnosticaFinalForm(forms.ModelForm):
         max_length=2000,
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4})
     )
+
+class OrdenHospitalizacionForm(forms.ModelForm):
+    class Meta:
+        model = Hospitalizacion
+        fields = ['tiempo', 'cantidad_visitas_dia']
+
+    def __init__(self, *args, **kwargs):
+        super(OrdenHospitalizacionForm, self).__init__(*args, **kwargs)
+        self.fields['tiempo'].widget.attrs.update({'class': 'form-control'})
+        self.fields['cantidad_visitas_dia'].widget.attrs.update({'class': 'form-control'})

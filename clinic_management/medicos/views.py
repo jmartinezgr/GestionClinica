@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from .forms import HistoriaClinicaForm, OrdenMedicamentoForm, OrdenProcedimientoForm, OrdenAyudaDiagnosticaForm, OrdenAyudaDiagnosticaFinalForm
+from .forms import HistoriaClinicaForm, OrdenMedicamentoForm, OrdenProcedimientoForm, OrdenAyudaDiagnosticaForm, OrdenAyudaDiagnosticaFinalForm,OrdenHospitalizacionForm
 from user.models import Usuario
 from personaladministrativo.models import Paciente
 from .models import *
+from enfermeras.models import Hospitalizacion,Visitas
 from django.contrib import messages
 
 def crear_historia_clinica(request):
@@ -128,6 +129,7 @@ def agregar_medicamento(request, id_historia_medica):
             # Agrega la nueva orden de medicamento a la historia clínica
             historia_clinica.ordenes.add(orden_medicamento.orden)
 
+            messages.success(request,"Se ha creado la orden de medicamento correctamente")
             return redirect('agregar_ordenes_con_id', id_historia_medica=id_historia_medica)
     else:
         form = OrdenMedicamentoForm()
@@ -177,6 +179,7 @@ def agregar_procedimiento(request, id_historia_medica):
             # Agregar la nueva orden de procedimiento a la historia clínica
             historia_clinica.ordenes.add(nueva_orden)
 
+            messages.success(request,"Se ha creado la orden de procedimiento correctamente")
             return redirect('agregar_ordenes_con_id', id_historia_clinica=id_historia_medica)
     else:
         form = OrdenProcedimientoForm()
@@ -210,11 +213,52 @@ def agregar_ayuda_diagnostica(request, id_historia_medica):
             # Agregar la nueva orden de ayuda diagnóstica a la historia clínica
             historia_clinica.ordenes.add(nueva_orden)
 
+            messages.success(request,"Se ha creado la orden de ayuda dignostica correctamente")
             return redirect('agregar_ordenes_con_id', id_historia_medica=id_historia_medica)
     else:
         form = OrdenAyudaDiagnosticaForm()
 
     return render(request, 'agregar_ayuda_diagnostica.html', {'form': form})
+
+def agregar_hospitalizacion(request, id_historia_medica):
+    historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
+
+    if request.method == 'POST':
+        form = OrdenHospitalizacionForm(request.POST)
+        if form.is_valid():
+            # Crea una nueva orden de hospitalización
+
+            nueva_orden = Orden(
+                paciente=historia_clinica.paciente,
+                medico=historia_clinica.medico,
+                tipo_orden='hospitalizacion',  # Tipo de orden hospitalizacion
+            )
+
+            nueva_orden.save()
+
+            orden_hospitalizacion = Hospitalizacion(
+                orden= nueva_orden,
+                tiempo=form.cleaned_data['tiempo'],
+                cantidad_visitas_dia=form.cleaned_data['cantidad_visitas_dia'],
+            )
+            orden_hospitalizacion.save()
+
+            nueva_visita = Visitas(
+                paciente = historia_clinica.paciente,
+                orden_hospitalizacion = orden_hospitalizacion
+            )
+
+            nueva_visita.save()
+
+            # Agrega la nueva orden de hospitalización a la historia clínica
+            historia_clinica.ordenes.add(nueva_orden)
+
+            messages.success(request,"Se ha creado la orden de hospitalizacion correctamente")
+            return redirect('agregar_ordenes_con_id', id_historia_medica=id_historia_medica)
+    else:
+        form = OrdenHospitalizacionForm()
+
+    return render(request, 'agregar_hospitalizacion.html', {'form': form})
 
 def buscar_estado_historia(request):
         

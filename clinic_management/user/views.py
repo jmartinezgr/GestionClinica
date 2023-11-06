@@ -15,7 +15,7 @@ def login_view(request):
                 login(request, user)
 
                 if user.rol is None:
-                    return redirect('home_enfermera')
+                    return redirect('home_medicos')
                 elif user.rol.name == 'Enfermeras':
                     return redirect('home_enfermera')
                 elif user.rol.name == 'Recursos Humanos':
