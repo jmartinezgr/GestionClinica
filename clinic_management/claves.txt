@@ -1,1 +1,6 @@
-doctor: mario_marulanda : #'~8{6DiyFf5
+Datos de ingreso:
+    medico-- username = wiliam_osler  -- Contraseña: E=i4P&55uN&2
+    enfermera-- username = jennifer_lawrence -- Contraseña: KQ73}Or48mC@
+    rrhh--  username = scarlett_johansson -- Constraseña:wE6h\Cw55`Kg
+    ppaa-- username = canco_rodriguez -- Constraseña:L#y$]2v9D83£
+    ssii-- username = laura_escanes -- Constraseña: y248(yNi7&61

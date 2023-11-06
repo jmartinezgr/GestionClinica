@@ -11,6 +11,7 @@ from decorators.custom_decorators import role_required
 
 # Create your views here.
 
+@role_required(['Recursos Humanos','Soporte de Información'])
 def registro_view(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
