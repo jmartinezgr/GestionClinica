@@ -16,9 +16,7 @@ Puedes instalar estas bibliotecas utilizando `pip`:
 pip install django djangorestframework reportlab
 ```
 
-Uso
-
-Proporciona información sobre cómo utilizar tu aplicación aquí.
+## Uso
 
 Datos de ingreso
 
