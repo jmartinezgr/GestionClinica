@@ -49,7 +49,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     nacimiento = models.DateField(default="2000-01-01",null=True)
     direccion = models.CharField('Direccion', max_length=30, blank=True)
     telefono = models.CharField('Numero de Telefono',max_length=10, blank=True)
-    rol = models.ForeignKey("user.Role", verbose_name=("Rol Laboral"), on_delete=models.CASCADE,null=True)
+    rol = models.ForeignKey("user.Role", verbose_name=("Rol Laboral"), on_delete=models.CASCADE,default=1,null=True)
     usuario_activo = models.BooleanField(default=True)
     usuario_administrador = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

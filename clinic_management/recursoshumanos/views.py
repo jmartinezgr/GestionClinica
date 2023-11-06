@@ -7,6 +7,7 @@ from .forms import UsuarioEditForm,RegistroAsistenciaForm
 from django.contrib import messages
 from user.models import Usuario
 from django.contrib.auth import logout
+from decorators.custom_decorators import role_required
 
 # Create your views here.
 
@@ -30,7 +31,7 @@ def registro_view(request):
         form = RegistroForm()
     return render(request, 'registro.html', {'form': form})
 
-@login_required
+@role_required(['Recursos Humanos','Soporte de Información'])
 def buscar_usuario(request):
     if request.method == 'POST':
         cedula = request.POST.get('numero_identificacion')
@@ -46,7 +47,7 @@ def buscar_usuario(request):
     return render(request, 'busqueda_usuario.html')
 
 
-@login_required
+@role_required(['Recursos Humanos','Soporte de Información'])
 def editar_usuario(request, usuario_id):
     usuario = get_object_or_404(Usuario, id=usuario_id)
     
@@ -67,7 +68,7 @@ def editar_usuario(request, usuario_id):
 
     return render(request, 'editar_usuario.html', {'form': form, 'usuario': usuario})
 
-
+@role_required(['Recursos Humanos','Soporte de Información'])
 def registrar_asistencia(request):
     if request.method == 'POST':
         form = RegistroAsistenciaForm(request.POST)

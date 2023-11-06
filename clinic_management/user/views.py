@@ -15,16 +15,17 @@ def login_view(request):
                 login(request, user)
 
                 if user.rol is None:
-                    return redirect('home_medicos')
+                    return redirect('home_recursos_humanos')
                 elif user.rol.name == 'Enfermeras':
-                    return redirect('home_enfermera')
+                    return redirect('home_enfermeras')
                 elif user.rol.name == 'Recursos Humanos':
                     return redirect('home_recursos_humanos')
                 elif user.rol.name == 'Personal Administrativo':
                     return redirect('home_personal_administrativo')
                 elif user.rol.name == 'Médicos':
                     return redirect('home_medicos')
-                    
+                elif user.rol.name == 'Soporte de Información':
+                    return redirect('home_recursos_humanos')
                 print(user.rol.name)                
             else:
                 messages.error(request, "Error: Credenciales inválidas. Inténtalo de nuevo.")

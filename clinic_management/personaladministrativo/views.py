@@ -12,13 +12,13 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
+from decorators.custom_decorators import role_required
 
-
-@login_required
+@role_required(['Personal Administrativo','Soporte de Información'])
 def home_personal_administrativo(request):
     return render(request, 'personaladministrativo.html', {'user': request.user})
 
-@login_required
+@role_required(['Personal Administrativo','Soporte de Información'])
 def crear_paciente(request):
     if request.method == 'POST':
         form = PacienteForm(request.POST)
@@ -61,7 +61,7 @@ def crear_paciente(request):
 
     return render(request, 'crear_paciente.html', {'form': form})
 
-@login_required
+@role_required(['Personal Administrativo','Soporte de Información'])
 def buscar_paciente(request):
     if request.method == 'POST':
         numero_identificacion = request.POST.get('numero_identificacion')
@@ -77,7 +77,7 @@ def buscar_paciente(request):
 
     return render(request, 'buscar_paciente.html')
 
-@login_required
+@role_required(['Personal Administrativo','Soporte de Información'])
 def actualizar_paciente(request, numero_identificacion):
     # Utiliza el número de identificación para obtener los datos del paciente a través de la API
     api_url = f'http://127.0.0.1:8000/api/pacientes/{numero_identificacion}/'
@@ -135,7 +135,7 @@ def actualizar_paciente(request, numero_identificacion):
 
     return render(request, 'actualizar_paciente.html', {'form': form, 'numero_identificacion': numero_identificacion})
 
-@login_required
+@role_required(['Personal Administrativo','Soporte de Información'])
 def buscar_paciente_facturacion(request):
     if request.method == 'POST':
         numero_identificacion = request.POST.get('numero_identificacion')
@@ -171,6 +171,7 @@ def calcular_costo_bruto(historia_clinica):
            pass
     return costo_bruto
 
+@role_required(['Personal Administrativo','Soporte de Información'])
 def generar_factura(request, numero_identificacion):
     try:
         paciente = Paciente.objects.get(numero_identificacion=numero_identificacion)
@@ -201,7 +202,8 @@ def generar_factura(request, numero_identificacion):
     except Paciente.DoesNotExist:
         messages.error(request,'Este paciente no existe o no tiene una historia clinica por pagar')
         return  redirect('buscar_paciente_facturacion')
-    
+
+@role_required(['Personal Administrativo','Soporte de Información'])  
 def generar_pdf_factura(request, numero_identificacion, costo_bruto):
     costo_bruto = float(costo_bruto)
 

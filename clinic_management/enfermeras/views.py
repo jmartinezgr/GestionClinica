@@ -5,8 +5,9 @@ from personaladministrativo.models  import Paciente
 from .forms import InformacionAdicionalForm
 import datetime
 from django.contrib import messages
+from decorators.custom_decorators import role_required
 
-@login_required
+@role_required(['Enfermeras','Soporte de Información'])
 def visitas_pendientes(request):
     # Obtener todas las visitas con estado False y ordenar por hora de creación (más antigua primero)
     visitas_pendientes = Visitas.objects.filter(estado=False).order_by('fecha')
@@ -16,7 +17,7 @@ def visitas_pendientes(request):
 
     return render(request, 'visitas_pendientes.html', context)
 
-@login_required
+@role_required(['Enfermeras','Soporte de Información'])
 def detalle_visita(request, visita_id):
     # Obtener la visita específica
     visita = Visitas.objects.get(id=visita_id)
@@ -54,7 +55,7 @@ def detalle_visita(request, visita_id):
 
     return render(request, 'detalle_visita.html', context)
 
-@login_required
+@role_required(['Enfermeras','Soporte de Información'])
 def buscar_visitas(request):
     if request.method == 'POST':
         numero_identificacion = request.POST.get('numero_identificacion')

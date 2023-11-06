@@ -5,7 +5,10 @@ from personaladministrativo.models import Paciente
 from .models import *
 from enfermeras.models import Hospitalizacion,Visitas
 from django.contrib import messages
+from decorators.custom_decorators import role_required
 
+
+@role_required(['Médicos','Soporte de Información'])
 def crear_historia_clinica(request):
     if request.method == 'POST':
         form = HistoriaClinicaForm(request.POST)
@@ -56,6 +59,7 @@ def crear_historia_clinica(request):
 
     return render(request, 'crear_historia.html', {'form': form})
 
+@role_required(['Médicos','Soporte de Información'])
 def agregar_ordenes(request):
     
     if request.method == 'POST':
@@ -76,6 +80,7 @@ def agregar_ordenes(request):
     
     return render(request,'elegir_orden.html')
 
+@role_required(['Médicos','Soporte de Información'])
 def agregar_ordenes_con_id(request, id_historia_medica):
     
     try:
@@ -86,6 +91,7 @@ def agregar_ordenes_con_id(request, id_historia_medica):
     
     return render(request, 'elegir_orden_con_id.html', {'id_historia_medica': id_historia_medica})
 
+@role_required(['Médicos','Soporte de Información'])
 def agregar_medicamento(request, id_historia_medica):
     historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
     
@@ -136,6 +142,7 @@ def agregar_medicamento(request, id_historia_medica):
 
     return render(request, 'agregar_medicamento.html', {'form': form})
 
+@role_required(['Médicos','Soporte de Información'])
 def agregar_procedimiento(request, id_historia_medica):
     historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
 
@@ -186,6 +193,7 @@ def agregar_procedimiento(request, id_historia_medica):
 
     return render(request, 'agregar_procedimiento.html', {'form': form})
 
+@role_required(['Médicos','Soporte de Información'])
 def agregar_ayuda_diagnostica(request, id_historia_medica):
     historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
 
@@ -220,6 +228,7 @@ def agregar_ayuda_diagnostica(request, id_historia_medica):
 
     return render(request, 'agregar_ayuda_diagnostica.html', {'form': form})
 
+@role_required(['Médicos','Soporte de Información'])
 def agregar_hospitalizacion(request, id_historia_medica):
     historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
 
@@ -260,6 +269,7 @@ def agregar_hospitalizacion(request, id_historia_medica):
 
     return render(request, 'agregar_hospitalizacion.html', {'form': form})
 
+@role_required(['Médicos','Soporte de Información'])
 def buscar_estado_historia(request):
         
     if request.method == 'POST':
@@ -280,7 +290,7 @@ def buscar_estado_historia(request):
     
     return render(request,'elegir_orden_historia.html')
 
-
+@role_required(['Médicos','Soporte de Información'])
 def estado_historia(request, id_historia_medica):
     historia_clinica = HistoriaClinica.objects.get(id=id_historia_medica)
     paciente_nombre = historia_clinica.paciente.nombre_completo
@@ -334,6 +344,7 @@ def estado_historia(request, id_historia_medica):
         'detalles_ordenes_ayuda_diagnostica': detalles_ordenes_ayuda_diagnostica,
     })
 
+@role_required(['Médicos','Soporte de Información'])
 def cerrar_orden(request, id_orden):
     orden = Orden.objects.get(id=id_orden)
 
@@ -359,6 +370,7 @@ def cerrar_orden(request, id_orden):
     messages.success(request,"Se cerro la orden con exito")
     return redirect('estado_historia', id_historia_medica=orden.historias_clinicas.first().id)
 
+@role_required(['Médicos','Soporte de Información'])
 def cerrar_ayuda_diagnostica(request, id_orden):
     orden_ayuda_diagnostica = OrdenAyudaDiagnostica.objects.get(orden_id=id_orden)
 
@@ -384,6 +396,7 @@ def cerrar_ayuda_diagnostica(request, id_orden):
 
     return render(request, 'cerrar_ayuda_diagnostica.html', {'form': form, 'orden_id': id_orden})
 
+@role_required(['Médicos','Soporte de Información'])
 def cerrar_historia_clinica(request, id_historia_medica):
 
     historia = HistoriaClinica.objects.get(id=id_historia_medica)
