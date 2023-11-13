@@ -47,6 +47,7 @@ def crear_paciente(request):
 
             if response.status_code == 201:
                 # Si la creación fue exitosa, puedes redirigir o mostrar un mensaje de éxitos
+                messages.success(request,'Has creado el paciente de manera exitosa')
                 return redirect('crear_paciente')
             else:
                 # Maneja el error de la creación

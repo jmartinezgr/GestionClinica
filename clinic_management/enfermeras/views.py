@@ -35,15 +35,24 @@ def detalle_visita(request, visita_id):
 
             historia = visita.orden_hospitalizacion
 
-            if historia.agregar_visita():
+            # Proceso para solicitar otra visita si es True
+            if form.cleaned_data['solicitar_otra_visita']:
                 nueva_visita = Visitas(
-                    paciente = visita.paciente,
-                    orden_hospitalizacion = visita.orden_hospitalizacion
+                    paciente=visita.paciente,
+                    orden_hospitalizacion=visita.orden_hospitalizacion
                 )
-
                 nueva_visita.save()
+            
+            else:
+                if historia.agregar_visita():
+                    nueva_visita = Visitas(
+                        paciente=visita.paciente,
+                        orden_hospitalizacion=visita.orden_hospitalizacion
+                    )
 
-            # Redireccionar a la página de visitas pendientes
+                    nueva_visita.save()
+
+                # Redireccionar a la página de visitas pendientes
             return redirect('visitas_pendientes')
     else:
         form = InformacionAdicionalForm(instance=visita)
