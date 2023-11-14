@@ -233,6 +233,10 @@ def generar_pdf_factura(request, numero_identificacion, costo_bruto):
         elements.append(Paragraph(f"Nombre del Paciente: {paciente.nombre_completo}", normal_style))
         elements.append(Paragraph(f"Edad: {paciente.fecha_nacimiento}", normal_style))
         elements.append(Paragraph(f"Cédula: {paciente.numero_identificacion}", normal_style))
+        elements.append(Paragraph(f"Medico Tratante: {historia_clinica.medico.nombre}"))
+        elements.append(Paragraph(f"Nombre de la Compañia de seguro: {paciente.nombre_compania_seguro}" if paciente.nombre_compania_seguro else "No registra"))
+        elements.append(Paragraph(f"Numero de la poliza: {paciente.numero_poliza_seguro}" if paciente.numero_poliza_seguro else "No registra"))
+        elements.append(Paragraph(f"Vigencia de la poliza: {"Activa" if paciente.estado_poliza_seguro else "Inctiva"} hasta nuevo aviso"))
 
         # Listar todas las órdenes relacionadas con la historia clínica
         ordenes = historia_clinica.ordenes.all()
