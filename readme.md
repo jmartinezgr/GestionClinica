@@ -1,45 +1,46 @@
 # Gestion Clinica
 
-Esta aplicacion se encarga de gestionar la informacion medica de un hospital, encargandose de la interaccion entre roles del hospital, control de los pacientes y la facturacion de los procesos usados por los mismos.
+This application manages medical information within a hospital, facilitating interaction among different roles, patient control, and the invoicing of processes associated with medical procedures.
 
-## Instalación
+## Installation
 
-Para ejecutar esta aplicación, asegúrate de tener instaladas las siguientes bibliotecas de Python:
+To run this application, ensure you have the following Python libraries installed:
 
 - [Django](https://www.djangoproject.com/)
 - [Django Rest Framework](https://www.django-rest-framework.org/)
 - [ReportLab](https://www.reportlab.com/)
 - [Requests](https://docs.python-requests.org/en/latest/)
 
-Puedes instalar estas bibliotecas utilizando `pip`:
+You can install these libraries using `pip`:
 
 ```bash
 pip install django djangorestframework reportlab requests
 ```
+## Usage
 
-## Uso
+Login Credentials
 
-Datos de ingreso
+You can find the usernames and passwords for the five roles in the claves.txt file in the project's root directory. Here is the login information:
 
-Puedes encontrar los nombres de usuario y contraseñas para los cinco roles en el archivo claves.txt en el directorio raíz del proyecto. Aquí tienes la información de inicio de sesión:
+- Doctor:
 
-- Médico:
+  - Username: wiliam_osler
+  - Password: E=i4P&55uN&2
+- Nurse:
 
-  - Nombre de usuario: wiliam_osler
-  - Contraseña: E=i4P&55uN&2
-- Enfermera:
+  - Username: jennifer_lawrence
+  - Password: KQ73}Or48mC@
+- Human Resources (HR):
 
-  - Nombre de usuario: jennifer_lawrence
-  - Contraseña: KQ73}Or48mC@
-- Recursos Humanos (RRHH):
+  - Username: scarlett_johansson
+  - Password: wE6h\Cw55`Kg
+- Administrative Staff (AS):
 
-  - Nombre de usuario: scarlett_johansson
-  - Contraseña: wE6h\Cw55`Kg
-- Personal Administrativo (PPAA):
+  - Username: canco_rodriguez
+  - Password: L#y$]2v9D83£
+- Information Support (IS):
 
-  - Nombre de usuario: canco_rodriguez
-  - Contraseña: L#y$]2v9D83£
-- Soporte de Información (SSII):
+  - Username: laura_escanes
+  - Password: y248(yNi7&61
 
-  - Nombre de usuario: laura_escanes
-  - Contraseña: y248(yNi7&61
+Please note that this application has not been hosted yet due to its size, but you can access a demonstration of its functionality in a video [link here]()
