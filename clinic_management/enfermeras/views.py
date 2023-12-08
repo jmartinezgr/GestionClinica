@@ -13,8 +13,19 @@ from django.utils import timezone
 def visitas_pendientes(request):
     # Obtener todas las visitas con estado False y ordenar por hora de creación (más antigua primero)
     visitas_pendientes = Visitas.objects.filter(estado=False).order_by('fecha')
+    
+    visitas = []
+
+    for visita in visitas_pendientes:
+
+        try:
+            historia_clinica = HistoriaClinica.objects.get(paciente=visita.paciente, cerrada=False)
+            visitas.append(visita)
+        except:
+            pass
+    
     context = {
-        'visitas_pendientes': visitas_pendientes,
+        'visitas_pendientes': visitas,
     }
 
     return render(request, 'visitas_pendientes.html', context)
@@ -22,7 +33,8 @@ def visitas_pendientes(request):
 @role_required(['Enfermeras', 'Soporte de Información'])
 def detalle_visita(request, visita_id):
     visita = Visitas.objects.get(id=visita_id)
-    historia_clinica = HistoriaClinica.objects.get(paciente=visita.paciente)
+
+    historia_clinica = HistoriaClinica.objects.get(paciente=visita.paciente, cerrada=False)
 
     if request.method == 'POST':
         form = InformacionAdicionalForm(request.POST, instance=visita)

@@ -236,7 +236,7 @@ def generar_pdf_factura(request, numero_identificacion, costo_bruto):
         elements.append(Paragraph(f"Medico Tratante: {historia_clinica.medico.nombre}"))
         elements.append(Paragraph(f"Nombre de la Compañia de seguro: {paciente.nombre_compania_seguro}" if paciente.nombre_compania_seguro else "No registra"))
         elements.append(Paragraph(f"Numero de la poliza: {paciente.numero_poliza_seguro}" if paciente.numero_poliza_seguro else "No registra"))
-        elements.append(Paragraph(f"Vigencia de la poliza: {"Activa" if paciente.estado_poliza_seguro else "Inctiva"} hasta nuevo aviso"))
+        elements.append(Paragraph(f"Vigencia de la poliza: Activa hasta nuevo aviso") if paciente.estado_poliza_seguro else f"Vigencia de la poliza: Inactiva hasta nuevo aviso")
 
         # Listar todas las órdenes relacionadas con la historia clínica
         ordenes = historia_clinica.ordenes.all()

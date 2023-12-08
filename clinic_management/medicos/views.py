@@ -67,7 +67,7 @@ def agregar_ordenes(request):
         try:
             paciente = Paciente.objects.get(numero_identificacion=numero_identificacion)
         except:
-            messages.error(request,"No hay ningun paciente con un ")            
+            messages.error(request,"No existe un paciente con ese numero de cedula")        
             return redirect('agregar_ordenes')
         
         try:
@@ -187,7 +187,7 @@ def agregar_procedimiento(request, id_historia_medica):
             historia_clinica.ordenes.add(nueva_orden)
 
             messages.success(request,"Se ha creado la orden de procedimiento correctamente")
-            return redirect('agregar_ordenes_con_id', id_historia_clinica=id_historia_medica)
+            return redirect('agregar_ordenes_con_id', id_historia_medica=id_historia_medica)
     else:
         form = OrdenProcedimientoForm()
 
